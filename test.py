@@ -13,6 +13,9 @@ def test_addTasks():
     assert len(tasklist) == 1
     assert tasklist[0] == 'New Task'
 
+# Note:
+# capsys.readouterr(): This captures the output printed to stdout during the function execution.
+
 def test_checkTask_no_tasks(capsys): # Needs further modification to capture the printed output instead of the list converted into string
     tasklist.clear()  # Clear tasklist before the test
     done.clear()  # Clear done list before the test
@@ -28,3 +31,12 @@ def test_checkTask_with_tasks(capsys):
     checkTask()
     captured = capsys.readouterr()
     assert captured.out.strip() == "The Current Tasks are:\nTask #1 : Task 1\nTask #2 : Task 2\nTask #3 : Task 3"
+
+def test_checkTask_marked_asDone(capsys):
+    # Test when some tasks are marked as done
+    tasklist.clear() # Clearing the tasklist so that it does not get tangled with the results from the other function
+    tasklist.extend(["Task 1", "Task 2", "Task 3"])
+    done.extend([0, 2])  # Mark Task 1 and Task 3 as done
+    checkTask()
+    captured = capsys.readouterr()
+    assert captured.out.strip() == "The Current Tasks are:\nTask #1 : Task 1 (done)\nTask #2 : Task 2\nTask #3 : Task 3 (done)"
