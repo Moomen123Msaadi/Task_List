@@ -26,14 +26,17 @@ def checkTask():  # a function that checks if there are tasks, or if they are do
 
 
 def completeTask():  # a function that marks a task as (done)
-    for i in range(len(tasklist)):
-        if i not in done:
-            print(f"Task #{i + 1}: " + tasklist[i])
+    if len(tasklist) == 0 or len(tasklist) == len(done):
+        print("The are no current tasks to be marked as done")
+    else:
+        for i in range(len(tasklist)):
+            if i not in done:
+                print(f"Task #{i + 1}: " + tasklist[i])
 
-    d = int(input("Select which task to be marked as Done: "))
-    done.append(d - 1)
+        d = int(input("Select which task to be marked as Done: "))
+        done.append(d - 1)
 
-    print(f"The task #{d}({tasklist[d - 1]}) has been marked as Done")
+        print(f"The task #{d}({tasklist[d - 1]}) has been marked as Done")
 
 
 def deleteTask():  # a function that deletes a task from the list, weather it is done or not
