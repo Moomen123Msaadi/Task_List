@@ -36,46 +36,48 @@ def completeTask():  # a function that marks a task as (done)
         d = int(input("Select which task to be marked as Done: "))
         done.append(d - 1)
 
-        print(f"The task #{d}({tasklist[d - 1]}) has been marked as Done")
+        print(f"The task #{d} ({tasklist[d - 1]}) has been marked as Done")
 
 
 def deleteTask():  # a function that deletes a task from the list, weather it is done or not
-    for i in range(len(tasklist)):
-        print(f"Task #{i + 1}: " + tasklist[i])
+    if len(tasklist) == 0:
+        print("There aare no task to br deleted")
+    else:
+        for i in range(len(tasklist)):
+            print(f"Task #{i + 1}: " + tasklist[i])
 
-    d = int(input("Select which task to be marked as Done: "))
-    tasklist.remove(tasklist[d - 1])
-    print(f"The task #{d} has been Deleted")
+        d = int(input("Select which task to be marked as Done: "))
+        tasklist.remove(tasklist[d - 1])
+        print(f"The task #{d} has been Deleted")
 
-    if d in done:
-        done.remove(d)
+        if d in done:
+            done.remove(d)
 
 
-if __name__ == "__main__":  #the main function
-    print("Welcome to the To do list :")
-    while True:
-        print("-----------------------------------")
-        print("Please select one of these choices:")
-        print("-----------------------------------")
-        print("1.Check your list")
-        print("2.Add Task")
-        print("3.Complete Task")
-        print("4.Delete Task")
-        print("5.Quit")
+print("Welcome to the To do list :")
+while True:
+    print("-----------------------------------")
+    print("Please select one of these choices:")
+    print("-----------------------------------")
+    print("1.Check your list")
+    print("2.Add Task")
+    print("3.Complete Task")
+    print("4.Delete Task")
+    print("5.Quit")
 
-        choice = int(input("Select your choice: "))
+    choice = int(input("Select your choice: "))
 
-        if choice == 1:
-            checkTask()
-        elif choice == 2:
-            addTasks()
-        elif choice == 3:
-            completeTask()
-        elif choice == 4:
-            deleteTask()
-        elif choice == 5:
-            break
-        else:
-            print("invalid choice, please select again")
+    if choice == 1:
+        checkTask()
+    elif choice == 2:
+        addTasks()
+    elif choice == 3:
+        completeTask()
+    elif choice == 4:
+        deleteTask()
+    elif choice == 5:
+        break
+    else:
+        print("invalid choice, please select again")
 
-    print("Thank you. Goodbye.")
+print("Thank you. Goodbye.")
