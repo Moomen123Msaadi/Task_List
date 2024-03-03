@@ -41,7 +41,7 @@ def completeTask():  # a function that marks a task as (done)
 
 def deleteTask():  # a function that deletes a task from the list, weather it is done or not
     if len(tasklist) == 0:
-        print("There aare no task to br deleted")
+        print("There are no task to be deleted")
     else:
         for i in range(len(tasklist)):
             print(f"Task #{i + 1}: " + tasklist[i])
@@ -50,34 +50,35 @@ def deleteTask():  # a function that deletes a task from the list, weather it is
         tasklist.remove(tasklist[d - 1])
         print(f"The task #{d} has been Deleted")
 
-        if d in done:
-            done.remove(d)
+        if d-1 in done:
+            done.remove(d-1)
 
 
-print("Welcome to the To do list :")
-while True:
-    print("-----------------------------------")
-    print("Please select one of these choices:")
-    print("-----------------------------------")
-    print("1.Check your list")
-    print("2.Add Task")
-    print("3.Complete Task")
-    print("4.Delete Task")
-    print("5.Quit")
+if __name__ == "__main__":
+    print("Welcome to the To do list :")
+    while True:
+        print("-----------------------------------")
+        print("Please select one of these choices:")
+        print("-----------------------------------")
+        print("1.Check your list")
+        print("2.Add Task")
+        print("3.Complete Task")
+        print("4.Delete Task")
+        print("5.Quit")
 
-    choice = int(input("Select your choice: "))
+        choice = int(input("Select your choice: "))
 
-    if choice == 1:
-        checkTask()
-    elif choice == 2:
-        addTasks()
-    elif choice == 3:
-        completeTask()
-    elif choice == 4:
-        deleteTask()
-    elif choice == 5:
-        break
-    else:
-        print("invalid choice, please select again")
+        if choice == 1:
+            checkTask()
+        elif choice == 2:
+            addTasks()
+        elif choice == 3:
+            completeTask()
+        elif choice == 4:
+            deleteTask()
+        elif choice == 5:
+            break
+        else:
+            print("invalid choice, please select again")
 
-print("Thank you. Goodbye.")
+    print("Thank you. Goodbye.")
