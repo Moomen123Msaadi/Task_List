@@ -11,6 +11,7 @@ def addTasks():  # a function that adds a task to the list
 def checkTask():  # a function that checks if there are tasks, or if they are done or not
     if len(tasklist) != 0:
         print("The Current Tasks are:")
+
         count = 0
         for i in range(len(tasklist)):
             if count in done:
@@ -32,11 +33,17 @@ def completeTask():  # a function that marks a task as (done)
         for i in range(len(tasklist)):
             if i not in done:
                 print(f"Task #{i + 1}: " + tasklist[i])
-
-        d = int(input("Select which task to be marked as Done: "))
-        done.append(d - 1)
-
-        print(f"The task #{d} ({tasklist[d - 1]}) has been marked as Done")
+        try:
+            d = int(input("Select which task to be marked as Done: "))
+            if 1 <= d <= len(tasklist):
+                done.append(d - 1)
+                print(f"The task #{d} ({tasklist[d - 1]}) has been marked as Done")
+            else:
+                print("Invalid task number. No task has been marked as Done.")
+                completeTask()
+        except ValueError:
+            print("Invalid Input. Try Again.")
+            completeTask()
 
 
 def deleteTask():  # a function that deletes a task from the list, weather it is done or not
@@ -46,12 +53,20 @@ def deleteTask():  # a function that deletes a task from the list, weather it is
         for i in range(len(tasklist)):
             print(f"Task #{i + 1}: " + tasklist[i])
 
-        d = int(input("Select which task to be marked as Done: "))
-        tasklist.remove(tasklist[d - 1])
-        print(f"The task #{d} has been Deleted")
+        try:
+            d = int(input("Select which task to be marked as Done: "))
+            if 1 <= d <= len(tasklist):
+                tasklist.remove(tasklist[d - 1])
+                print(f"The task #{d} has been Deleted")
+                if d-1 in done:
+                    done.remove(d-1)
+            else:
+                print("Invalid task number. No task has been deleted.")
+                deleteTask()
 
-        if d-1 in done:
-            done.remove(d-1)
+        except ValueError:
+            print("Invalid Input. Try Again.")
+            deleteTask()
 
 
 if __name__ == "__main__":
@@ -66,19 +81,22 @@ if __name__ == "__main__":
         print("4.Delete Task")
         print("5.Quit")
 
-        choice = int(input("Select your choice: "))
+        try:
+            choice = int(input("Select your choice: "))
 
-        if choice == 1:
-            checkTask()
-        elif choice == 2:
-            addTasks()
-        elif choice == 3:
-            completeTask()
-        elif choice == 4:
-            deleteTask()
-        elif choice == 5:
-            break
-        else:
-            print("invalid choice, please select again")
+            if choice == 1:
+                checkTask()
+            elif choice == 2:
+                addTasks()
+            elif choice == 3:
+                completeTask()
+            elif choice == 4:
+                deleteTask()
+            elif choice == 5:
+                break
+            else:
+                print("invalid choice, please select again")
+        except ValueError:
+            print("Invalid input. Please enter a valid task number.")
 
     print("Thank you. Goodbye.")
