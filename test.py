@@ -1,12 +1,12 @@
 import pytest
 
 from unittest.mock import patch
-from Task_List import addTasks, tasklist, completeTask, done, checkTask
-
+from Task_List import addTasks, tasklist, completeTask, done, checkTask, deleteTask
 
 def test_addTasks():
     # Here we are mocking an input (which means putting a fake input) for a task called 'New Task'
     # We are testing the length of the list, and the content of the first slot we filled
+
     tasklist.clear()  # Clearing the list of tasks before the test
     with patch('builtins.input', return_value='New Task'):
         addTasks()
@@ -17,8 +17,8 @@ def test_addTasks():
 # Note:
 # capsys.readouterr(): This captures the output printed to stdout during the function execution.
 
-def test_checkTask_no_tasks(
-        capsys):  # Needs further modification to capture the printed output instead of the list converted into string
+
+def test_checkTask_no_tasks(capsys):  # Needs further modification to capture the printed output instead of the list converted into string
     tasklist.clear()  # Clear tasklist before the test
     done.clear()  # Clear done list before the test
 
@@ -34,7 +34,10 @@ def test_checkTask_with_tasks(capsys):
     tasklist.extend(["Task 1", "Task 2", "Task 3"])
     checkTask()
     captured = capsys.readouterr()
-    assert captured.out.strip() == "The Current Tasks are:\nTask #1 : Task 1\nTask #2 : Task 2\nTask #3 : Task 3"
+    assert captured.out.strip() == ("The Current Tasks are:\n"
+                                    "Task #1 : Task 1\n"
+                                    "Task #2 : Task 2\n"
+                                    "Task #3 : Task 3")
 
 
 def test_checkTask_marked_asDone(capsys):
@@ -44,7 +47,10 @@ def test_checkTask_marked_asDone(capsys):
     done.extend([0, 2])  # Mark Task 1 and Task 3 as done
     checkTask()
     captured = capsys.readouterr()
-    assert captured.out.strip() == "The Current Tasks are:\nTask #1 : Task 1 (done)\nTask #2 : Task 2\nTask #3 : Task 3 (done)"
+    assert captured.out.strip() == ("The Current Tasks are:\n"
+                                    "Task #1 : Task 1 (done)\n"
+                                    "Task #2 : Task 2\n"
+                                    "Task #3 : Task 3 (done)")
 
 
 def test_completeTask_no_tasks(capsys):
@@ -68,7 +74,6 @@ def test_completeTask_all_tasks_alreadyDone(capsys):
     completeTask()
 
     captured = capsys.readouterr()
-
     assert "The are no current tasks to be marked as done" in captured.out
 
 
@@ -83,9 +88,56 @@ def test_completeTask_with_tasksDone(capsys):
     # We are marking the second task called "Task2" as done
     with patch('builtins.input', return_value='2'):
         completeTask()
-
     captured = capsys.readouterr()
 
     assert done == [0, 2, 1]
     assert len(done) == 3
-    assert "The task #2(Task2) has been marked as Done" in captured.out
+    assert "Task #2: Task2\nTask #4: Task4\nThe task #2 (Task2) has been marked as Done\n" in captured.out
+
+
+def test_deleteTask_with_noTasks(capsys):
+    tasklist.clear()
+    done.clear()
+    deleteTask()
+
+    captured = capsys.readouterr()
+
+    assert "There are no task to be deleted\n" == captured.out
+
+
+def test_deleteTask_with_tasks(capsys):
+    tasklist.clear()
+    done.clear()
+    tasklist.extend(["task1", "task2", "task3"])
+
+    with patch('builtins.input', return_value='2'):
+        deleteTask()
+
+    captured = capsys.readouterr()
+
+    assert len(tasklist) == 2
+    assert tasklist == ["task1", "task3"]
+    assert ("Task #1: task1\n"
+            "Task #2: task2\n"
+            "Task #3: task3\n"
+            "The task #2 has been Deleted\n") == captured.out
+
+
+def test_deleteTask_with_done_tasks(capsys):
+    tasklist.clear()
+    done.clear()
+
+    tasklist.extend(["task1", "task2", "task3"])
+    done.append(1)
+
+    with patch('builtins.input', return_value='2'):
+        deleteTask()
+
+    captured = capsys.readouterr()
+
+    assert tasklist == ["task1", "task3"]
+    assert done == []
+    assert ("Task #1: task1\n"
+            "Task #2: task2\n"
+            "Task #3: task3\n"
+            "The task #2 has been Deleted\n") == captured.out
