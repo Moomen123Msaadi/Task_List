@@ -66,7 +66,6 @@ def deleteTask():  # a function that deletes a task from the list, weather it is
             print("Invalid Input. Try Again.")
             deleteTask()
 
-
 if __name__ == "__main__":
 
     print("Welcome to the To do list :")
