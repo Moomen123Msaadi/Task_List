@@ -1,65 +1,63 @@
-tasklist = []
-done = []
+tasks = {}
 
 
 def addTasks():  # a function that adds a task to the list
     t = input("Insert your task here: ")
-    tasklist.append(t)
+    tasks[len(tasks) + 1] = {"task": t, "done": False}
     print("The task has been added to the list.")
 
 
 def checkTask():  # a function that checks if there are tasks, or if they are done or not
-    if len(tasklist) != 0:
+    if len(tasks) != 0:
         print("The Current Tasks are:")
 
-        count = 0
-        for i in range(len(tasklist)):
-            if count in done:
-                print(f"Task #{i + 1} : " + tasklist[i] + " (done)")
+        for i, task in tasks.items():
+            if task["done"]:
+                print(f"Task #{i} : " + task["task"] + " (done)")
             else:
-                print(f"Task #{i + 1} : " + tasklist[i])
-            count += 1
+                print(f"Task #{i} : " + task["task"])
 
-        if len(tasklist) == len(done) and len(tasklist) != 0:
+        if all(task["done"] for task in tasks.values()):
             print("All tasks are marked as done.")
     else:
         print("There are no current tasks.")
 
 
 def completeTask():  # a function that marks a task as (done)
-    if len(tasklist) == 0 or len(tasklist) == len(done):
+    if len(tasks) == 0:
         print("The are no current tasks to be marked as done")
     else:
-        for i in range(len(tasklist)):
-            if i not in done:
-                print(f"Task #{i + 1}: " + tasklist[i])
+        # checkTask() if you want to see the tasks even if they are done; the one bellow will only show the ones not marked as done
+        for i, task in tasks.items():
+            if not task["done"]: # or we can just say ' if task["done"] == False '
+                print(f"Task #{i} : " + task["task"])
         try:
-            d = int(input("Select which task to be marked as Done: "))
-            if 1 <= d <= len(tasklist):
-                done.append(d - 1)
-                print(f"The task #{d} ({tasklist[d - 1]}) has been marked as Done")
+            if not all(task["done"] for task in tasks.values()):
+                d = int(input("Select which task to be marked as Done: "))
+                if 1 <= d <= len(tasks):
+                    tasks[d]["done"] = True
+                    print(f"The task #{d} ({tasks[d]['task']}) has been marked as Done")
+                else:
+                    print("Invalid task number. No task has been marked as Done.")
+                    completeTask()
             else:
-                print("Invalid task number. No task has been marked as Done.")
-                completeTask()
+                print("Tasks are all marked as done.")
+
         except ValueError:
             print("Invalid Input. Try Again.")
             completeTask()
 
 
 def deleteTask():  # a function that deletes a task from the list, weather it is done or not
-    if len(tasklist) == 0:
+    if len(tasks) == 0:
         print("There are no task to be deleted")
     else:
-        for i in range(len(tasklist)):
-            print(f"Task #{i + 1}: " + tasklist[i])
-
+        checkTask()
         try:
-            d = int(input("Select which task to be marked as Done: "))
-            if 1 <= d <= len(tasklist):
-                tasklist.remove(tasklist[d - 1])
+            d = int(input("Select which task to be Deleted: "))
+            if 1 <= d <= len(tasks):
+                del tasks[d]
                 print(f"The task #{d} has been Deleted")
-                if d-1 in done:
-                    done.remove(d-1)
             else:
                 print("Invalid task number. No task has been deleted.")
                 deleteTask()
@@ -70,6 +68,7 @@ def deleteTask():  # a function that deletes a task from the list, weather it is
 
 
 if __name__ == "__main__":
+
     print("Welcome to the To do list :")
     while True:
         print("-----------------------------------")
@@ -83,7 +82,6 @@ if __name__ == "__main__":
 
         try:
             choice = int(input("Select your choice: "))
-
             if choice == 1:
                 checkTask()
             elif choice == 2:
@@ -96,6 +94,7 @@ if __name__ == "__main__":
                 break
             else:
                 print("invalid choice, please select again")
+
         except ValueError:
             print("Invalid input. Please enter a valid task number.")
 
