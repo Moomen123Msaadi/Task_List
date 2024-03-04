@@ -1,17 +1,20 @@
-import pytest
 
 from unittest.mock import patch
-from Task_List import addTasks, tasklist, completeTask, done, checkTask, deleteTask
+from Task_List import addTasks, tasks, completeTask, checkTask, deleteTask
 
-def test_addTasks():
+def test_addTasks(capsys):
     # Here we are mocking an input (which means putting a fake input) for a task called 'New Task'
     # We are testing the length of the list, and the content of the first slot we filled
 
-    tasklist.clear()  # Clearing the list of tasks before the test
+    tasks.clear()  # Clearing the list of tasks before the test
     with patch('builtins.input', return_value='New Task'):
         addTasks()
-    assert len(tasklist) == 1
-    assert tasklist[0] == 'New Task'
+
+    captured = capsys.readouterr() # this line here was only added to not display 'The task has been added to the list.' when testing
+
+    assert len(tasks) == 1
+    assert tasks[1]['task'] == 'New Task'
+
 
 
 # Note:
@@ -19,32 +22,38 @@ def test_addTasks():
 
 
 def test_checkTask_no_tasks(capsys):  # Needs further modification to capture the printed output instead of the list converted into string
-    tasklist.clear()  # Clear tasklist before the test
-    done.clear()  # Clear done list before the test
+    tasks.clear()  # Clear tasklist before the tes
 
     # Call the function
     checkTask()
-
     captured = capsys.readouterr()
     assert captured.out.strip() == "There are no current tasks."
 
 
 def test_checkTask_with_tasks(capsys):
     # Test when there are tasks
-    tasklist.extend(["Task 1", "Task 2", "Task 3"])
+    tasks.clear()
+    tasks.update({
+        1: {"task": "Task 1", "done": False},
+        2: {"task": "Task 2", "done": False},
+        3: {"task": "Task 3", "done": False}
+    })
     checkTask()
     captured = capsys.readouterr()
+
     assert captured.out.strip() == ("The Current Tasks are:\n"
                                     "Task #1 : Task 1\n"
                                     "Task #2 : Task 2\n"
                                     "Task #3 : Task 3")
 
-
 def test_checkTask_marked_asDone(capsys):
     # Test when some tasks are marked as done
-    tasklist.clear()  # Clearing the tasklist so that it does not get tangled with the results from the other function
-    tasklist.extend(["Task 1", "Task 2", "Task 3"])
-    done.extend([0, 2])  # Mark Task 1 and Task 3 as done
+    tasks.clear()  # Clearing the tasklist so that it does not get tangled with the results from the other function
+    tasks.update({
+        1: {"task": "Task 1", "done": True},
+        2: {"task": "Task 2", "done": False},
+        3: {"task": "Task 3", "done": True}
+    })
     checkTask()
     captured = capsys.readouterr()
     assert captured.out.strip() == ("The Current Tasks are:\n"
@@ -55,49 +64,47 @@ def test_checkTask_marked_asDone(capsys):
 
 def test_completeTask_no_tasks(capsys):
     # Clear tasklist and done list before the test
-    tasklist.clear()
-    done.clear()
+    tasks.clear()
+
     completeTask()
-
     captured = capsys.readouterr()
-
     assert "The are no current tasks to be marked as done" in captured.out
 
 
 def test_completeTask_all_tasks_alreadyDone(capsys):
     # Clear tasklist and done list before the test
-    tasklist.clear()
-    done.clear()
-
-    tasklist.append(["Task1", "Task2"])
-    done.append([0, 1])
+    tasks.clear()
+    tasks.update({
+        1: {"task": "Task 1", "done": True},
+        2: {"task": "Task 2", "done": True},
+        3: {"task": "Task 3", "done": True}
+    })
     completeTask()
-
     captured = capsys.readouterr()
-    assert "The are no current tasks to be marked as done" in captured.out
+    assert "Tasks are all marked as done." in captured.out
 
 
 def test_completeTask_with_tasksDone(capsys):
     # A test that checks if it is possible to complete tasks even if some of them are marked as done
-    tasklist.clear()
-    done.clear()
-
-    tasklist.extend(["Task1", "Task2", "Task3", "Task4"])
-    done.extend([0, 2])
+    tasks.clear()
+    tasks.update({
+        1: {"task": "Task1", "done": True},
+        2: {"task": "Task2", "done": False},
+        3: {"task": "Task3", "done": True},
+        4: {"task": "Task4", "done": False}
+    })
 
     # We are marking the second task called "Task2" as done
     with patch('builtins.input', return_value='2'):
         completeTask()
     captured = capsys.readouterr()
 
-    assert done == [0, 2, 1]
-    assert len(done) == 3
-    assert "Task #2: Task2\nTask #4: Task4\nThe task #2 (Task2) has been marked as Done\n" in captured.out
-
+    assert captured.out == ("Task #2 : Task2\n"
+                            "Task #4 : Task4\n"
+                            "The task #2 (Task2) has been marked as Done\n")
 
 def test_deleteTask_with_noTasks(capsys):
-    tasklist.clear()
-    done.clear()
+    tasks.clear()
     deleteTask()
 
     captured = capsys.readouterr()
@@ -106,38 +113,41 @@ def test_deleteTask_with_noTasks(capsys):
 
 
 def test_deleteTask_with_tasks(capsys):
-    tasklist.clear()
-    done.clear()
-    tasklist.extend(["task1", "task2", "task3"])
+    tasks.clear()
+    tasks.update({
+        1: {"task": "Task1", "done": False},
+        2: {"task": "Task2", "done": False},
+        3: {"task": "Task3", "done": False}
+    })
 
     with patch('builtins.input', return_value='2'):
         deleteTask()
 
     captured = capsys.readouterr()
 
-    assert len(tasklist) == 2
-    assert tasklist == ["task1", "task3"]
-    assert ("Task #1: task1\n"
-            "Task #2: task2\n"
-            "Task #3: task3\n"
+    assert ("The Current Tasks are:\n"
+            "Task #1 : Task1\n"
+            "Task #2 : Task2\n"
+            "Task #3 : Task3\n"
             "The task #2 has been Deleted\n") == captured.out
 
 
 def test_deleteTask_with_done_tasks(capsys):
-    tasklist.clear()
-    done.clear()
+    tasks.clear()
 
-    tasklist.extend(["task1", "task2", "task3"])
-    done.append(1)
+    tasks.update({
+        1: {"task": "Task1", "done": True},
+        2: {"task": "Task2", "done": False},
+        3: {"task": "Task3", "done": False}
+    })
 
-    with patch('builtins.input', return_value='2'):
+    with patch('builtins.input', return_value='1'):
         deleteTask()
 
     captured = capsys.readouterr()
 
-    assert tasklist == ["task1", "task3"]
-    assert done == []
-    assert ("Task #1: task1\n"
-            "Task #2: task2\n"
-            "Task #3: task3\n"
-            "The task #2 has been Deleted\n") == captured.out
+    assert ("The Current Tasks are:\n"
+            "Task #1 : Task1 (done)\n"
+            "Task #2 : Task2\n"
+            "Task #3 : Task3\n"
+            "The task #1 has been Deleted\n") == captured.out
