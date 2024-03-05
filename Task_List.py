@@ -29,14 +29,18 @@ def completeTask():  # a function that marks a task as (done)
     else:
         # checkTask() if you want to see the tasks even if they are done; the one bellow will only show the ones not marked as done
         for i, task in tasks.items():
-            if not task["done"]: # or we can just say ' if task["done"] == False '
+            if not task["done"]:  # or we can just say ' if task["done"] == False '
                 print(f"Task #{i} : " + task["task"])
         try:
-            if not all(task["done"] for task in tasks.values()):
+            if not all(task["done"] for task in tasks.values()):  # if all the tasks have 'done' == True in their dictionaries
                 d = int(input("Select which task to be marked as Done: "))
                 if 1 <= d <= len(tasks):
-                    tasks[d]["done"] = True
-                    print(f"The task #{d} ({tasks[d]['task']}) has been marked as Done")
+                    if tasks[d]["done"]:
+                        print("The task has already been marked as done. Choose another task.")
+                        completeTask()
+                    else:
+                        tasks[d]["done"] = True
+                        print(f"The task #{d} ({tasks[d]['task']}) has been marked as Done")
                 else:
                     print("Invalid task number. No task has been marked as Done.")
                     completeTask()
@@ -65,6 +69,7 @@ def deleteTask():  # a function that deletes a task from the list, weather it is
         except ValueError:
             print("Invalid Input. Try Again.")
             deleteTask()
+
 
 if __name__ == "__main__":
 
