@@ -3,7 +3,9 @@ tasks = {}
 
 def addTasks():  # a function that adds a task to the list
     t = input("Insert your task here: ")
-    tasks[len(tasks) + 1] = {"task": t, "done": False}
+    cat = input("Insert Category: ")
+
+    tasks[len(tasks) + 1] = {"task": t, "done": False, "category": cat}
     print("The task has been added to the list.")
 
 
@@ -13,9 +15,9 @@ def checkTask():  # a function that checks if there are tasks, or if they are do
 
         for i, task in tasks.items():
             if task["done"]:
-                print(f"Task #{i} : " + task["task"] + " (done)")
+                print(f"Task #{i} : " + task["task"] + " (done) - " + task["category"])
             else:
-                print(f"Task #{i} : " + task["task"])
+                print(f"Task #{i} : " + task["task"] + " - " + task["category"])
 
         if all(task["done"] for task in tasks.values()):
             print("All tasks are marked as done.")
@@ -32,15 +34,11 @@ def completeTask():  # a function that marks a task as (done)
             if not task["done"]:  # or we can just say ' if task["done"] == False '
                 print(f"Task #{i} : " + task["task"])
         try:
-            if not all(task["done"] for task in tasks.values()):  # if all the tasks have 'done' == True in their dictionaries
+            if not all(task["done"] for task in tasks.values()):
                 d = int(input("Select which task to be marked as Done: "))
                 if 1 <= d <= len(tasks):
-                    if tasks[d]["done"]:
-                        print("The task has already been marked as done. Choose another task.")
-                        completeTask()
-                    else:
-                        tasks[d]["done"] = True
-                        print(f"The task #{d} ({tasks[d]['task']}) has been marked as Done")
+                    tasks[d]["done"] = True
+                    print(f"The task #{d} ({tasks[d]['task']}) has been marked as Done")
                 else:
                     print("Invalid task number. No task has been marked as Done.")
                     completeTask()
@@ -72,7 +70,6 @@ def deleteTask():  # a function that deletes a task from the list, weather it is
 
 
 if __name__ == "__main__":
-
     print("Welcome to the To do list :")
     while True:
         print("-----------------------------------")
