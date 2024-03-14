@@ -1,3 +1,5 @@
+import random
+
 tasks = {}
 
 
@@ -15,9 +17,9 @@ def checkTask():  # a function that checks if there are tasks, or if they are do
 
         for i, task in tasks.items():
             if task["done"]:
-                print(f"Task #{i} : " + task["task"] + " (done) - " + task["category"])
+                print(f"Task #{i} : " + task["task"] + " (done) " + task["category"])
             else:
-                print(f"Task #{i} : " + task["task"] + " - " + task["category"])
+                print(f"Task #{i} : " + task["task"], task["category"])
 
         if all(task["done"] for task in tasks.values()):
             print("All tasks are marked as done.")
@@ -68,6 +70,21 @@ def deleteTask():  # a function that deletes a task from the list, weather it is
             print("Invalid Input. Try Again.")
             deleteTask()
 
+def random_task():
+    undone_number = []
+    if len(tasks) == 0:
+        print("There are no tasks right now.")
+    elif len(tasks) == 1:
+        nbr = list(tasks.keys())[0]
+        print(f"There is only one task which is Task #{nbr}: {list(tasks.values())[0]['task']}.")
+    else:
+        for nbr, task in tasks.items():
+            if not task["done"]:
+                undone_number.append(nbr)
+
+        r = random.choice(undone_number)
+        print(f"Random Task: #{r}: {list(tasks.values())[r-1]['task']}")
+
 
 if __name__ == "__main__":
     print("Welcome to the To do list :")
@@ -79,7 +96,8 @@ if __name__ == "__main__":
         print("2.Add Task")
         print("3.Complete Task")
         print("4.Delete Task")
-        print("5.Quit")
+        print("5.Select a random uncompleted Task")
+        print("6.Quit")
 
         try:
             choice = int(input("Select your choice: "))
@@ -92,6 +110,8 @@ if __name__ == "__main__":
             elif choice == 4:
                 deleteTask()
             elif choice == 5:
+                random_task()
+            elif choice == 6:
                 break
             else:
                 print("invalid choice, please select again")
