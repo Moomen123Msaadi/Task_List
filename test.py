@@ -1,5 +1,5 @@
 from unittest.mock import patch
-from Task_List import addTasks, tasks, completeTask, checkTask, deleteTask
+from Task_List import addTasks, tasks, completeTask, checkTask, deleteTask, random_task
 
 
 def test_addTasks(capsys):
@@ -172,3 +172,45 @@ def test_deleteTask_with_done_tasks(capsys):
             "Task #2 : Task2 \n"
             "Task #3 : Task3 \n"
             "The task #1 has been Deleted\n") == captured.out
+
+
+def test_random_task_with_no_tasks(capsys):
+    tasks.clear()
+
+    random_task()
+
+    captured = capsys.readouterr()
+
+    assert captured.out == "There are no tasks right now.\n"
+
+
+def test_random_task_with_one_task(capsys):
+    tasks.clear()
+
+    tasks.update({
+        1: {"task": "Task1", "done": False, "category": ""},
+    })
+
+    random_task()
+
+    captured = capsys.readouterr()
+    nbr = list(tasks.keys())[0]
+    assert captured.out == f"There is only one task which is Task #{nbr}: {list(tasks.values())[0]['task']}.\n"
+
+
+def test_random_task_with_tasks(capsys):
+    tasks.clear()
+
+    tasks.update({
+        1: {"task": "Task1", "done": False, "category": ""},
+        2: {"task": "Task2", "done": False, "category": ""},
+        3: {"task": "Task3", "done": False, "category": ""}
+    })
+
+    random_task()
+
+    captured = capsys.readouterr()
+
+    assert (captured.out == f"Random Task: #1: Task1\n"
+            or captured.out == f"Random Task: #2: Task2\n"
+            or captured.out == f"Random Task: #3: Task3\n")
