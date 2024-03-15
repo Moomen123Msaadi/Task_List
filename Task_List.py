@@ -21,6 +21,8 @@ def checkTask():  # a function that checks if there are tasks, or if they are do
             else:
                 print(f"Task #{i} : " + task["task"], task["category"])
 
+        progress_bar()
+
         if all(task["done"] for task in tasks.values()):
             print("All tasks are marked as done.")
     else:
@@ -84,6 +86,13 @@ def random_task():
 
         r = random.choice(undone_number)
         print(f"Random Task: #{r}: {list(tasks.values())[r-1]['task']}")
+
+def progress_bar():
+    prog = 0
+    for task in tasks.values():
+        if task["done"]:
+            prog += 1
+    print(f"Tasks done: {100 * (prog / len(tasks))}%")
 
 
 if __name__ == "__main__":
