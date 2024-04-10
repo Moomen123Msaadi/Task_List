@@ -92,7 +92,38 @@ def progress_bar():
     for task in tasks.values():
         if task["done"]:
             prog += 1
-    print(f"Tasks done: {100 * (prog / len(tasks))}%")
+    if len(tasks) == 0:
+        print("Tasks done: 0%")
+    else:
+        print(f"Tasks done: {100 * (prog / len(tasks))}%")
+
+
+def mark_unDone():
+    if len(tasks) == 0:
+        print("The are no current tasks to be Unmarked")
+    else:
+        for i, task in tasks.items():
+            if task["done"]:
+                print(f"Task #{i} : " + task["task"])
+        if not all(task["done"] == False for task in tasks.values()):
+            try:
+                d = int(input("Select which task to be marked as Done: "))
+                if 1 <= d <= len(tasks):
+                    if not tasks[d]["done"]:
+                        print("The task has yet to be Unmarked. Choose another task.")
+                    else:
+                        tasks[d]["done"] = False
+                        print(f"The task #{d} ({tasks[d]['task']}) has been Unmarked")
+                        # mark_unDone()
+                else:
+                    print("Invalid task number.")
+                    mark_unDone()
+
+            except ValueError:
+                print("Invalid Input. Try Again.")
+                mark_unDone()
+        else:
+            print("All tasks are Unmarked.")
 
 
 if __name__ == "__main__":
@@ -106,7 +137,8 @@ if __name__ == "__main__":
         print("3.Complete Task")
         print("4.Delete Task")
         print("5.Select a random uncompleted Task")
-        print("6.Quit")
+        print("6.Un-mark a Task")
+        print("7.Quit")
 
         try:
             choice = int(input("Select your choice: "))
@@ -121,6 +153,8 @@ if __name__ == "__main__":
             elif choice == 5:
                 random_task()
             elif choice == 6:
+                mark_unDone()
+            elif choice == 7:
                 break
             else:
                 print("invalid choice, please select again")
